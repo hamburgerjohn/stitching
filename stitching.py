@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
     QDockWidget, QTextEdit
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import numpy as np 
 from OpenGL.GL import *
 from OpenGL.GLUT import glutInit, glutBitmapCharacter, GLUT_BITMAP_9_BY_15
@@ -45,6 +45,9 @@ class GLWidget(QOpenGLWidget):
         self.recorded_points = []
         self.prediction_curves = []
         self.recording_dock_text = QTextEdit()
+        self.automate_record = False
+        self.automated_done = True
+        self.count = 0
 
         #Allows openGl widget to be focused
         #without it, only focuses on GUI 
@@ -112,9 +115,14 @@ class GLWidget(QOpenGLWidget):
             glColor3f(1.0,0.0,0.0)
 
             glBegin(GL_LINES)
-            glVertex2f(0, self.height()/2)
-            glVertex2f(self.width(), self.height()/2)
+            glVertex2f(0, float(self.height()/2))
+            glVertex2f(self.width(), float(self.height()/2))
+
+            glVertex2f(float(self.width()/2), 0)
+            glVertex2f(float(self.width()/2), self.height())
             glEnd()
+
+            
 
         ###################################################################
 
@@ -134,18 +142,25 @@ class GLWidget(QOpenGLWidget):
             bottom = self.camera_y - variable_size
             top = self.camera_y + variable_size
 
-            visible_points = [
+            self.visible_points = [
                 (x,y) for x,y in self.points
                 if left <= x <= right and bottom <= y <= top
             ]
 
-            if len(visible_points) == 1:
-                print(visible_points)
-                self.recorded_points.append(visible_points[0])
+            
+
+            if len(self.visible_points) == 1:
+                self.zoom = 0.1
+                self.recorded_points.append(self.visible_points[0])
                 self.recorded_points = list(set(self.recorded_points))
                 self.recorded_points.sort(key=lambda x: x[0])
                 self.recording_dock_text.clear()
                 self.recording_dock_text.append("".join([str(x) + "\n" for x in self.recorded_points]))
+                
+
+
+                
+
 
         glFlush()
        
@@ -173,9 +188,66 @@ class GLWidget(QOpenGLWidget):
             self.zoom = max(0.1, self.zoom - self.zoom_step)
         elif key == Qt.Key.Key_Minus:
             self.zoom += self.zoom_step
+            
         
 
         self.update()
+
+    def startAutoZoom(self, step=0.01, interval=16):
+        self.zoom_timer = QTimer(self)
+        self.zoom_timer.timeout.connect(lambda: self.autoZoomStep(step))
+        self.zoom_timer.start(interval)
+
+    def autoZoomStep(self, step):
+        zoom = self.zoom       
+        zoom -= step
+
+        if self.automated_done:
+            
+            for c in self.prediction_curves:
+                self.recording_dock_text.append(str(list(c)))
+                self.recording_dock_text.setAlignment(Qt.AlignCenter)
+                self.recording_dock_text.append("-----------------------")
+                self.recording_dock_text.setAlignment(Qt.AlignCenter)
+
+                
+            
+            self.stopAutoZoom()
+
+        if zoom >= 0.1 and zoom != 0.1:
+            self.zoom = zoom
+
+        
+        if self.zoom == 0.1 and len(self.visible_points) == 1:
+            self.camera_x += 50
+            self.count += 1
+        
+        if self.count >= 7:
+            self.camera_x -= 7 * 50
+            self.camera_y += 40
+            self.count = 0
+
+         
+            self.prediction_curves.append(sorted(list(set(self.recorded_points)), key=lambda x: x[0]))
+            
+
+            self.recorded_points.clear()
+            self.recording_dock_text.clear()
+
+            if len(self.prediction_curves) >= 4:
+                self.automated_done = True
+            self.update()
+            
+
+
+
+        self.update()
+
+    def stopAutoZoom(self):
+        if hasattr(self, "zoom_timer"):
+            self.zoom_timer.stop()
+            self.update()
+
 
 class RecordingDock(QDockWidget):
 
@@ -214,11 +286,12 @@ class MainWindow(QMainWindow):
 
         
         #Create toggleable button and attaches event handler
-        self.coordsToggle = self.create_toggle_button("Toggle Coordinates", self.onToggleLabels, True)
+        self.coordsToggle = self.createToggleButton("Toggle Coordinates", self.onToggleLabels, True)
 
-        self.linesToggle = self.create_toggle_button("Toggle Lines", self.onToggleLines, True)
+        self.linesToggle = self.createToggleButton("Toggle Lines", self.onToggleLines, True)
 
-        self.recordToggle = self.create_toggle_button("Toggle Record", self.onToggleRecord, True)
+        self.recordToggle = self.createToggleButton("Toggle Record", self.onToggleRecord, True)
+
 
         self.resetRecord = QPushButton(self)
         self.resetRecord.setText("Confirm Record")
@@ -228,13 +301,17 @@ class MainWindow(QMainWindow):
         self.openRecordings.setText("Open Recordings")
         self.openRecordings.clicked.connect(self.onOpenRecordings)
 
+        self.automateRecord = QPushButton(self)
+        self.automateRecord.setText("Automate Record")
+        self.automateRecord.clicked.connect(self.onToggleAutomate)
+
 
         #add openGL widget
         self.glWidget = GLWidget(self)
 
         #horizontal layout
         hLayout1 = QHBoxLayout()
-        hLayout1 = self.add_widgets_to_layout(
+        hLayout1 = self.addWidgetsToLayout(
             hLayout1,
             self.combo,
             self.coordsToggle,
@@ -242,11 +319,12 @@ class MainWindow(QMainWindow):
         )
 
         hLayout2 = QHBoxLayout()
-        hLayout2 = self.add_widgets_to_layout(
+        hLayout2 = self.addWidgetsToLayout(
             hLayout2,
             self.recordToggle,
             self.resetRecord,
-            self.openRecordings
+            self.openRecordings,
+            self.automateRecord
         )
 
         #main layout is vertical
@@ -267,7 +345,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(main_container)
 
     #helper func
-    def create_toggle_button(self, title, eventHandler, checkable):
+    def createToggleButton(self, title, eventHandler, checkable):
         toggleButton = QPushButton(self)
         toggleButton.setCheckable(checkable)
         toggleButton.setText(title)
@@ -277,7 +355,7 @@ class MainWindow(QMainWindow):
 
     
     
-    def add_widgets_to_layout(self, layout, *args):
+    def addWidgetsToLayout(self, layout, *args):
         for i , args in enumerate(args):
             layout.addWidget(args)
 
@@ -316,6 +394,12 @@ class MainWindow(QMainWindow):
     def onToggleRecord(self, checked):
         self.recording_dock.show()
         self.glWidget.record_point = checked
+
+        if checked:
+            self.glWidget.prediction_curves.clear()
+            
+        print(self.glWidget.prediction_curves)
+        
         self.glWidget.update()
 
     def onResetToggle(self, checked):
@@ -327,15 +411,22 @@ class MainWindow(QMainWindow):
             if len(self.glWidget.recorded_points) > 0:
                 self.glWidget.prediction_curves.append(set(self.glWidget.recorded_points))
 
+            print(self.glWidget.prediction_curves)
             self.glWidget.recorded_points.clear()
             self.glWidget.recording_dock_text.clear()
-            print(self.glWidget.prediction_curves)
             self.glWidget.update()
     
     def onOpenRecordings(self, checked):
         pass
-    #utility func
-    def set_coords(self, file1, file2):
+
+    def onToggleAutomate(self, checked):
+        
+        if self.glWidget.record_point:        
+            self.glWidget.startAutoZoom(step=10)
+            self.glWidget.automated_done = False
+
+    #utility func    
+    def setCoords(self, file1, file2):
         
         x_points = read_txt(file1)
         y_points = read_txt(file2)
@@ -353,7 +444,7 @@ if __name__ == "__main__":
     glutInit()
     app = QApplication(sys.argv)
     window = MainWindow()
-    window.set_coords("GetX.TXT", "GetY.TXT")
+    window.setCoords("GetX.TXT", "GetY.TXT")
     window.resize(1000,1000)
     window.show()
     sys.exit(app.exec_())

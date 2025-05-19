@@ -70,14 +70,7 @@ def get_current_drive():
     return exe_dir[0] 
 
 
-x_points = read_txt("GetX.TXT")
-y_points = read_txt("GetY.TXT")
-coords = []
 
-for i, x in enumerate(x_points):
-    coords.append([x, y_points[i]])
-
-print(coords)
 
 
 
