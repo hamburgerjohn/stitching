@@ -1,6 +1,3 @@
-VisionGauge(r) OnLine
-Version 17.00(r) 07/Apr./2025
-
 Data Group# 1
 Name: X Positions
 Data Group Type: 1

@@ -1,6 +1,3 @@
-VisionGauge(r) OnLine
-Version 17.00(r) 07/Apr./2025
-
 Data Group# 2
 Name: Y Positions
 Data Group Type: 1
