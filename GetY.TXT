@@ -1,0 +1,73 @@
+VisionGauge(r) OnLine
+Version 17.00(r) 07/Apr./2025
+
+Data Group# 2
+Name: Y Positions
+Data Group Type: 1
+Include Labels: 0
+Include Nominals: 0
+
+Linear Units:  millimeter
+Angular Units:  Degrees
+
+  No.        Measured           Lower            Upper            Pass /         X               Y               Z            ROI: Left        ROI: Right       ROI: Bottom      ROI: Top        Nominal:           Label:                                                                      Units Type:  
+              value             limit            limit            Fail
+
+   1         999.999            0.000            0.000             Fail     0.000            0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   2        1000.010            0.000            0.000             Fail     -50.000          0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   3        1000.017            0.000            0.000             Fail     -99.999          0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   4        1000.019            0.000            0.000             Fail     -150.001         -0.000           0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   5        1000.018            0.000            0.000             Fail     -200.001         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   6        1000.013            0.000            0.000             Fail     -249.999         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   7        1000.003            0.000            0.000             Fail     -300.000         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   8        1040.015            0.000            0.000             Fail     0.001            -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+   9        1040.026            0.000            0.000             Fail     -50.000          -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  10        1040.030            0.000            0.000             Fail     -100.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  11        1040.036            0.000            0.000             Fail     -150.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  12        1040.032            0.000            0.000             Fail     -200.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  13        1040.024            0.000            0.000             Fail     -250.000         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  14        1040.014            0.000            0.000             Fail     -300.003         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  15        1080.030            0.000            0.000             Fail     0.001            -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  16        1080.038            0.000            0.000             Fail     -50.000          -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  17        1080.043            0.000            0.000             Fail     -99.999          -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  18        1080.049            0.000            0.000             Fail     -150.000         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  19        1080.040            0.000            0.000             Fail     -200.001         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  20        1080.034            0.000            0.000             Fail     -250.001         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  21        1080.029            0.000            0.000             Fail     -300.003         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  22        1120.037            0.000            0.000             Fail     -0.001           -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  23        1120.047            0.000            0.000             Fail     -50.000          -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  24        1120.053            0.000            0.000             Fail     -100.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  25        1120.054            0.000            0.000             Fail     -149.999         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  26        1120.050            0.000            0.000             Fail     -200.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  27        1120.050            0.000            0.000             Fail     -250.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+  28        1120.042            0.000            0.000             Fail     -300.001         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure Y Position                                                               Linear          
+
+
+
+Numerical Statistics:
+
+Number of Measurements = 28
+Minimum = 999.999
+Maximum = 1120.054
+Range (i.e. Max. - Min.) = 120.055
+Average = 1060.030
+Median = 1060.032
+Variance = 2075.329
+Std.Dev. = 45.556
+
+Process Capability Statistics:
+
+Upper limit = 0.000
+Lower limit = 0.000
+Cp = 0.000
+CpK+ = -7.756
+CpK- = 7.756
+
+Pass/Fail Statistics:
+
+Num. Pass = 0
+Num. Fail = 28
+Pass rate (%) = 0.000
+Fail rate (%) = 100.000
+
+File saved: 04\24\2025 08:05:50.453

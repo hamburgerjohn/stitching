@@ -1,0 +1,73 @@
+VisionGauge(r) OnLine
+Version 17.00(r) 07/Apr./2025
+
+Data Group# 1
+Name: X Positions
+Data Group Type: 1
+Include Labels: 0
+Include Nominals: 0
+
+Linear Units:  millimeter
+Angular Units:  Degrees
+
+  No.        Measured           Lower            Upper            Pass /         X               Y               Z            ROI: Left        ROI: Right       ROI: Bottom      ROI: Top        Nominal:           Label:                                                                      Units Type:  
+              value             limit            limit            Fail
+
+   1        1000.001            0.000            0.000             Fail     0.000            0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   2        1049.990            0.000            0.000             Fail     -50.000          0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   3        1099.982            0.000            0.000             Fail     -99.999          0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   4        1149.969            0.000            0.000             Fail     -150.001         -0.000           0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   5        1199.963            0.000            0.000             Fail     -200.001         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   6        1249.955            0.000            0.000             Fail     -249.999         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   7        1299.937            0.000            0.000             Fail     -300.000         0.000            0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   8        1000.001            0.000            0.000             Fail     0.001            -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+   9        1049.992            0.000            0.000             Fail     -50.000          -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  10        1099.982            0.000            0.000             Fail     -100.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  11        1149.976            0.000            0.000             Fail     -150.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  12        1199.970            0.000            0.000             Fail     -200.001         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  13        1249.958            0.000            0.000             Fail     -250.000         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  14        1299.944            0.000            0.000             Fail     -300.003         -40.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  15         999.991            0.000            0.000             Fail     0.001            -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  16        1049.979            0.000            0.000             Fail     -50.000          -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  17        1099.978            0.000            0.000             Fail     -99.999          -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  18        1149.976            0.000            0.000             Fail     -150.000         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  19        1199.965            0.000            0.000             Fail     -200.001         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  20        1249.956            0.000            0.000             Fail     -250.001         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  21        1299.945            0.000            0.000             Fail     -300.003         -80.000          0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  22         999.974            0.000            0.000             Fail     -0.001           -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  23        1049.968            0.000            0.000             Fail     -50.000          -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  24        1099.963            0.000            0.000             Fail     -100.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  25        1149.961            0.000            0.000             Fail     -149.999         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  26        1199.953            0.000            0.000             Fail     -200.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  27        1249.949            0.000            0.000             Fail     -250.000         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+  28        1299.934            0.000            0.000             Fail     -300.001         -120.000         0.000            0.000            0.000            0.000            0.000           0.000            Measure X Position                                                               Linear          
+
+
+
+Numerical Statistics:
+
+Number of Measurements = 28
+Minimum = 999.974
+Maximum = 1299.945
+Range (i.e. Max. - Min.) = 299.971
+Average = 1149.968
+Median = 1149.973
+Variance = 10367.033
+Std.Dev. = 101.819
+
+Process Capability Statistics:
+
+Upper limit = 0.000
+Lower limit = 0.000
+Cp = 0.000
+CpK+ = -3.765
+CpK- = 3.765
+
+Pass/Fail Statistics:
+
+Num. Pass = 0
+Num. Fail = 28
+Pass rate (%) = 0.000
+Fail rate (%) = 100.000
+
+File saved: 04\24\2025 08:05:56.764
