@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QOpenGLWidget, 
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-    QDockWidget, QTextEdit
+    QDockWidget, QTextEdit, QDialog, QGridLayout,
+    QLabel
 )
 from PyQt5.QtCore import Qt, QTimer
 import numpy as np 
@@ -20,18 +21,6 @@ class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.points = [
-            [0.000,0.000],
-            [0.000,0.500],
-            [0.0,-0.5],
-            [0.5,0.0],
-            [0.5,0.5],
-            [0.5,-0.5],
-            [-0.5,0.0],
-            [-0.5,0.5],
-            [-0.5,-0.5],
-        ]
-
         self.camera_x = 1000.0
         self.camera_y = 1000.0
         self.camera_step_x = 50.0
@@ -44,7 +33,7 @@ class GLWidget(QOpenGLWidget):
         self.record_point = False
         self.recorded_points = []
         self.prediction_curves = []
-        self.recording_dock_text = QTextEdit()
+        self.coords_dock_text = QTextEdit()
         self.automate_record = False
         self.automated_done = True
         self.count = 0
@@ -154,13 +143,8 @@ class GLWidget(QOpenGLWidget):
                 self.recorded_points.append(self.visible_points[0])
                 self.recorded_points = list(set(self.recorded_points))
                 self.recorded_points.sort(key=lambda x: x[0])
-                self.recording_dock_text.clear()
-                self.recording_dock_text.append("".join([str(x) + "\n" for x in self.recorded_points]))
-                
-
-
-                
-
+                self.coords_dock_text.clear()
+                self.coords_dock_text.append("".join([str(x) + "\n" for x in self.recorded_points]))
 
         glFlush()
        
@@ -193,6 +177,19 @@ class GLWidget(QOpenGLWidget):
 
         self.update()
 
+    def scalePoints(self, scale):
+        
+        scaled_points = []
+
+        for p in self.points:
+            scaled_points.append([p[0] / float(scale), p[1] * float(scale)])
+
+        print(scaled_points)
+
+        self.points = scaled_points
+
+        self.update()
+
     def startAutoZoom(self, step=0.01, interval=16):
         self.zoom_timer = QTimer(self)
         self.zoom_timer.timeout.connect(lambda: self.autoZoomStep(step))
@@ -203,12 +200,17 @@ class GLWidget(QOpenGLWidget):
         zoom -= step
 
         if self.automated_done:
-            
+
+            self.coords_dock_text.append("X                        Y")
+            self.coords_dock_text.setAlignment(Qt.AlignCenter)
+            self.coords_dock_text.append("--------------------------")
+            self.coords_dock_text.setAlignment(Qt.AlignCenter)
+
             for c in self.prediction_curves:
-                self.recording_dock_text.append(str(list(c)))
-                self.recording_dock_text.setAlignment(Qt.AlignCenter)
-                self.recording_dock_text.append("-----------------------")
-                self.recording_dock_text.setAlignment(Qt.AlignCenter)
+                self.coords_dock_text.append(str(list(c)))
+                self.coords_dock_text.setAlignment(Qt.AlignCenter)
+                self.coords_dock_text.append("-----------------------")
+                self.coords_dock_text.setAlignment(Qt.AlignCenter)
 
                 
             
@@ -232,7 +234,7 @@ class GLWidget(QOpenGLWidget):
             
 
             self.recorded_points.clear()
-            self.recording_dock_text.clear()
+            self.coords_dock_text.clear()
 
             if len(self.prediction_curves) >= 4:
                 self.automated_done = True
@@ -249,7 +251,7 @@ class GLWidget(QOpenGLWidget):
             self.update()
 
 
-class RecordingDock(QDockWidget):
+class CoordsDock(QDockWidget):
 
     def __init__(self, widget):
         super().__init__()
@@ -266,8 +268,139 @@ class RecordingDock(QDockWidget):
         self.setTitleBarWidget(QWidget())
         self.hide()
 
-    def addWidget(self, widget):
-        self.widget = widget
+
+class RecordingDisplay(QOpenGLWidget):
+
+    
+    
+    def __init__(self, points, parent=None):
+        super().__init__(parent)
+
+        self.camera_x = 1150.0
+        self.camera_y = 1060.0
+        self.camera_step_x = 50.0
+        self.camera_step_y = 40.0
+        self.view_size = 1.0
+        self.zoom = 200.0
+        self.zoom_step = 50.0
+        self.show_labels = False
+
+        self.points = points
+
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setFocus()
+        
+
+    def initializeGL(self):
+        glClearColor(0,0,0,1)
+
+    def resizeGL(self, w, h):
+        glViewport(0, 0, w, h)
+
+
+    def paintGL(self):
+        
+        glClear(int(GL_COLOR_BUFFER_BIT) | int(GL_DEPTH_BUFFER_BIT))
+
+        glLoadIdentity()
+        
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+
+        variable_size = self.view_size * self.zoom
+        gluOrtho2D(-variable_size + self.camera_x, variable_size + self.camera_x, -variable_size + self.camera_y, variable_size + self.camera_y)
+
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+        glPointSize(5.0)
+        glColor3f(1.0, 1.0, 0.0)
+
+        glEnableClientState(GL_VERTEX_ARRAY)
+        glVertexPointer(2, GL_FLOAT, 0, self.points)
+        glDrawArrays(GL_POINTS, 0, len(self.points))
+        glDisableClientState(GL_VERTEX_ARRAY)
+
+        # draw labels
+        if self.show_labels:
+            glColor3f(1.0, 1.0, 1.0)
+            for x, y in self.points:
+                label = f"({x:.3f},{y:.3f})"
+                self.drawText2D(x - 0.01, y - 0.01, label)
+
+
+        glFlush()
+
+    def drawText2D(self, x,y, string):
+        glRasterPos(x,y)
+
+        for ch in string:
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ord(ch))
+
+    def keyPressEvent(self, event):
+        
+        key = event.key()
+
+        if key == Qt.Key.Key_Left:
+            self.camera_x += self.camera_step_x
+        elif key == Qt.Key.Key_Right:
+            self.camera_x -= self.camera_step_x
+        elif key == Qt.Key.Key_Up:
+            self.camera_y -= self.camera_step_y
+        elif key == Qt.Key.Key_Down:
+            self.camera_y += self.camera_step_y
+        elif key == Qt.Key.Key_Plus:
+            self.zoom = max(0.1, self.zoom - self.zoom_step)
+        elif key == Qt.Key.Key_Minus:
+            self.zoom += self.zoom_step
+            
+        
+
+        self.update()
+
+        
+    
+
+class RecordingsDialog(QDialog):
+
+    def __init__(self, prediction_curves):
+        super().__init__()
+
+        self.resize(600, 600)
+
+        layout = QGridLayout()
+        
+        
+        x=0
+        y=0
+        count = 0
+        
+        while count != len(prediction_curves):
+            
+            cell_layout = QVBoxLayout()
+            container = QWidget()
+            glWidget = RecordingDisplay(prediction_curves[count])
+            
+
+            if count % 2 == 0 and count != 0:
+                x = 0
+                y += 1
+            
+            
+            
+            cell_layout.addWidget(QLabel("Y = " + str(round(list(prediction_curves[count][0])[1]))))
+            cell_layout.addWidget(glWidget)
+            container.setLayout(cell_layout)
+
+            layout.addWidget(container, x, y)
+
+
+            x += 1
+            count += 1
+
+        self.setLayout(layout)
+
+        
 
     
 
@@ -305,6 +438,13 @@ class MainWindow(QMainWindow):
         self.automateRecord.setText("Automate Record")
         self.automateRecord.clicked.connect(self.onToggleAutomate)
 
+        self.scaleXButton = QPushButton(self)
+        self.scaleXButton.setText("ScaleX")
+        self.scaleXButton.clicked.connect(self.onToggleScaleX)
+
+        self.scaleXText = QTextEdit()
+        self.scaleXText.setMaximumHeight(25)
+
 
         #add openGL widget
         self.glWidget = GLWidget(self)
@@ -327,16 +467,25 @@ class MainWindow(QMainWindow):
             self.automateRecord
         )
 
+        hLayout3 = QHBoxLayout()
+        hLayout3 = self.addWidgetsToLayout(
+            hLayout3,
+            self.scaleXButton,
+            self.scaleXText,
+        )
+
         #main layout is vertical
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(hLayout1)
         mainLayout.addLayout(hLayout2)
+        mainLayout.addLayout(hLayout3)
         mainLayout.addWidget(self.glWidget)
 
         
-        self.recording_dock = RecordingDock(self.glWidget.recording_dock_text)
-        self.addDockWidget(Qt.RightDockWidgetArea,self.recording_dock)
-        self.resizeDocks([self.recording_dock], [int(self.width()* 0.25)], Qt.Horizontal)
+        self.coords_dock = CoordsDock(self.glWidget.coords_dock_text)
+        self.addDockWidget(Qt.RightDockWidgetArea,self.coords_dock)
+        self.resizeDocks([self.coords_dock], [int(self.width()* 0.25)], Qt.Horizontal)
+        
 
         
 
@@ -392,13 +541,11 @@ class MainWindow(QMainWindow):
         self.glWidget.update()
 
     def onToggleRecord(self, checked):
-        self.recording_dock.show()
+        self.coords_dock.show()
         self.glWidget.record_point = checked
 
         if checked:
             self.glWidget.prediction_curves.clear()
-            
-        print(self.glWidget.prediction_curves)
         
         self.glWidget.update()
 
@@ -406,24 +553,31 @@ class MainWindow(QMainWindow):
 
         if not self.glWidget.record_point:
 
-            self.recording_dock.hide()
+            self.coords_dock.hide()
 
             if len(self.glWidget.recorded_points) > 0:
                 self.glWidget.prediction_curves.append(set(self.glWidget.recorded_points))
 
-            print(self.glWidget.prediction_curves)
             self.glWidget.recorded_points.clear()
-            self.glWidget.recording_dock_text.clear()
+            self.glWidget.coords_dock_text.clear()
             self.glWidget.update()
     
     def onOpenRecordings(self, checked):
-        pass
+        self.dialog = RecordingsDialog(self.glWidget.prediction_curves)
+        self.dialog.show()
 
     def onToggleAutomate(self, checked):
         
         if self.glWidget.record_point:        
             self.glWidget.startAutoZoom(step=10)
             self.glWidget.automated_done = False
+
+
+    def onToggleScaleX(self, checked):
+        self.glWidget.scalePoints(self.scaleXText.toPlainText())
+        print(self.scaleXText.toPlainText())
+    
+
 
     #utility func    
     def setCoords(self, file1, file2):
